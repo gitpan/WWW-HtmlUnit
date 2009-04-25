@@ -1,0 +1,17 @@
+Revision history for Perl extension WWW::HtmlUnit.
+
+0.04 2009.04.24.23.44
+  - Update to HtmlUnit 2.5
+  - Move into the WWW namespace
+
+0.03 2008.12.31.04.40
+  - Update to HtmlUnit 2.4
+  - Include google calendar .ics file upload example
+
+0.02 2008.12.30.14.46
+  - Fixed module description
+  - Fixed the MANIFEST to actually include the jar files
+
+0.01 2008.12.30.01.45
+	- Initial version
+
