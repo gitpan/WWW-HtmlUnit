@@ -35,33 +35,41 @@ documentation, L<http://htmlunit.sourceforge.net/apidocs/>.
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use File::Find;
 use vars qw( $jar_path );
 
+
 sub find_jar_path {
     my $self = shift;
-    my $module = 'HtmlUnit';
-    $module =~ s/\*$/.*/;
-
-    my $found = {};
-    my @module_path;
-    find {
-        wanted => sub {
-            my $path = $File::Find::name;
-            return if -d $_;
-            push @module_path, $path if $path =~ /[\\\/]$module.pm$/i;
-        },
-    }, grep {-d $_ and $_ ne '.'} @INC;
-    #print "Mod path: @module_path\n";
-    my $path = shift @module_path;
-    $path =~ s/\/$module.pm$//;
-    $path = "$path/HtmlUnit/jar";
-    #print "Path: $path\n";
+    my $path = $INC{'WWW/HtmlUnit.pm'};
+    $path =~ s/\.pm$/\/jar/;
     return $path;
 }
 
+# This way might be better?
+# sub find_jar_path {
+    # my $self = shift;
+    # my $module = 'WWW/HtmlUnit';
+    # $module =~ s/\*$/.*/;
+    # 
+    # my $found = {};
+    # my @module_path;
+    # find {
+        # wanted => sub {
+            # my $path = $File::Find::name;
+            # return if -d $_;
+            # push @module_path, $path if $path =~ /[\\\/]$module.pm$/i;
+        # },
+    # }, grep {-d $_ and $_ ne '.'} @INC;
+    # print "Mod path: @module_path\n";
+    # my $path = shift @module_path;
+    # $path =~ s/\/$module.pm$//;
+    # $path = "$path/WWW/HtmlUnit/jar";
+    # print "Path: $path\n";
+    # return $path;
+# }
 
 BEGIN {
   $jar_path = find_jar_path();
