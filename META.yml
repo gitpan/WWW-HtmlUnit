@@ -1,7 +1,7 @@
 --- #YAML:1.0
 name:               WWW-HtmlUnit
-version:            0.08
-abstract:           Inline::Java based wrapper of the HtmlUnit v2.7 library
+version:            0.09
+abstract:           Inline::Java based wrapper of the HtmlUnit v2.8 library
 author:
     - awwaiid <awwaiid@thelackthereof.org>
 license:            unknown
