@@ -22,7 +22,7 @@ WWW::HtmlUnit - Inline::Java based wrapper of the HtmlUnit v2.8 library
 
 This is a wrapper around the HtmlUnit library (HtmlUnit version 2.8 for this
 release). It includes the HtmlUnit jar itself and it's dependencies. All this
-library really does is find the jars and load them up using Inline::Java.
+library really does is find the jars and load them up using L<Inline::Java>.
 
 The reason all this is interesting? HtmlUnit has very good javascript support,
 so you can automate, scrape, or test javascript-required websites.
@@ -36,21 +36,51 @@ There are two problems that I run into when installing L<Inline::Java>, and
 thus L<WWW::HtmlUnit>, which is telling the installer where to find your java
 home and that the L<Inline::Java> test suite is broken. It turns out this is
 really really easy, just define the JAVA_HOME environment variable before you
-start your CPAN shell / installer. I do this in Debian/Ubuntu:
+start your CPAN shell / installer. And for the L<Java::Inline> test suite...
+well just skip it (using -n with cpanm). I do this in Debian/Ubuntu:
 
   apt-get install default-jdk
   JAVA_HOME=/usr/lib/jvm/default-java cpanm -n Inline::Java
   cpanm WWW::HtmlUnit
 
-and everything works the way I want! I should submit a patch to the error
-message that Inline::Java spits out...
+and everything works the way I want!
+
+NOTE: I've also had good success installing the beta version of
+L<Inline::Java>, at the time of the writing version 0.52_90. I didn't have to
+pass the '-n' to bypass the test suite with the beta version.
+
+=head1 DOCUMENTATION
+
+You can get the bulk of the documentation directly from the L<HtmlUnit apidoc site|http://htmlunit.sourceforge.net/apidocs/index.html>. Since WWW::HtmlUnit is mostly a wrapper around the real Java API, what you actually have to do is translate some of the java notation into perl notation. Mostly this is replacing '.' with '->'.
+
+Key classes that you might want to look at:
+
+=over 4
+
+=item L<WebClient|http://htmlunit.sourceforge.net/apidocs/com/gargoylesoftware/htmlunit/WebClient.html>
+
+Represents a web browser. This is what C<< WWW::HtmlUnit->new >> returns.
+
+=item L<HtmlPage|http://htmlunit.sourceforge.net/apidocs/com/gargoylesoftware/htmlunit/html/HtmlPage.html>
+
+A single HTML Page.
+
+=item L<HtmlUnit|http://htmlunit.sourceforge.net/apidocs/com/gargoylesoftware/htmlunit/html/HtmlElement.html>
+
+An individual HTML element (node).
+
+=back
+
+Also see L<WWW::HtmlUnit::Sweet> for a way to pretend that HtmlUnit works a
+little like L<WWW::Mechanize>, but not really.
+
 
 =cut
 
 use strict;
 use warnings;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 sub find_jar_path {
   my $self = shift;
@@ -58,30 +88,6 @@ sub find_jar_path {
   $path =~ s/\.pm$/\/jar/;
   return $path;
 }
-
-# This way might be better?
-# use File::Find;
-# sub find_jar_path {
-    # my $self = shift;
-    # my $module = 'WWW/HtmlUnit';
-    # $module =~ s/\*$/.*/;
-    # 
-    # my $found = {};
-    # my @module_path;
-    # find {
-        # wanted => sub {
-            # my $path = $File::Find::name;
-            # return if -d $_;
-            # push @module_path, $path if $path =~ /[\\\/]$module.pm$/i;
-        # },
-    # }, grep {-d $_ and $_ ne '.'} @INC;
-    # print "Mod path: @module_path\n";
-    # my $path = shift @module_path;
-    # $path =~ s/\/$module.pm$//;
-    # $path = "$path/WWW/HtmlUnit/jar";
-    # print "Path: $path\n";
-    # return $path;
-# }
 
 sub collect_default_jars {
   my $jar_path = find_jar_path();
@@ -109,11 +115,27 @@ sub collect_default_jars {
 
 =head1 MODULE IMPORT PARAMETERS
 
-If you need to include extra .jar files, you can do:
+If you need to include extra .jar files, and/or if you want to study more java
+classes, you can do:
 
-  use HtmlUnit jars => ['/path/to/blah.jar'];
+  use HtmlUnit
+    jars => ['/path/to/blah.jar'],
+    study => ['class.to.study'];
 
-and that wil be added to the list of jars for Inline::Java to autostudy.
+and that wil be added to the list of jars for L<Inline::Java> to autostudy, and
+add to the list of classes for L<Inline::Java> to immediately study. A class
+must be on the study list to be directly instantiated.
+
+Whether you ask for it or not, WebClient, BrowserVersion, and Cookie (each in
+the com.gargoylesoftware.htmlunit package) are studied. You can get to studied
+classes by adding WWW::HtmlUnit:: to their package name. So, you could make a
+cookie like this:
+
+  my $cookie = WWW::HtmlUnit::com::gargoylesoftware::htmlunit::Cookie->new($name, $value);
+  $webClient->getCookieManager->addCookie($cookie);
+
+Which is, incidentally, just the sort of thing that I should wrap in
+WWW::HtmlUnit::Sweet :)
 
 =cut
 
@@ -121,18 +143,23 @@ sub import {
   my $class = shift;
   my %parameters = @_;
   my $custom_jars = "";
-  if ($parameters{jars}) {
-      $custom_jars = join(':', @{$parameters{jars}});
+  if ($parameters{'jars'}) {
+      $custom_jars = join(':', @{$parameters{'jars'}});
+  }
+
+  my @STUDY = (
+      'com.gargoylesoftware.htmlunit.WebClient',
+      'com.gargoylesoftware.htmlunit.BrowserVersion',
+      'com.gargoylesoftware.htmlunit.util.Cookie',
+  );    
+  if ($parameters{'STUDY'}) {
+      push(@STUDY, @{$parameters{'STUDY'}}, @{$parameters{'study'}});
   }
 
   require Inline;
   Inline->import(
     Java => 'STUDY',
-    STUDY => [
-      'com.gargoylesoftware.htmlunit.WebClient',
-      'com.gargoylesoftware.htmlunit.BrowserVersion',
-      'com.gargoylesoftware.htmlunit.util.Cookie',
-    ],
+    STUDY => \@STUDY,
     AUTOSTUDY => 1,
     CLASSPATH => collect_default_jars() . ":" . $custom_jars
   );
@@ -187,11 +214,13 @@ How do I turn off SSL certificate checking?
 
 =item * Use that to have a quiet-mode
 
+=item * Include lungching's confirmation handler code
+
 =back
 
 =head1 SEE ALSO
 
-L<http://htmlunit.sourceforge.net/>, L<Inline::Java>
+L<WWW::HtmlUnit::Sweet>, L<http://htmlunit.sourceforge.net/>, L<Inline::Java>
 
 =head1 AUTHOR
 
