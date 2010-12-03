@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               WWW-HtmlUnit
-version:            0.12
+version:            0.13
 abstract:           Inline::Java based wrapper of the HtmlUnit v2.8 library
 author:
     - awwaiid <awwaiid@thelackthereof.org>
