@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               WWW-HtmlUnit
-version:            0.13
+version:            0.14
 abstract:           Inline::Java based wrapper of the HtmlUnit v2.8 library
 author:
     - awwaiid <awwaiid@thelackthereof.org>
@@ -11,7 +11,7 @@ configure_requires:
 build_requires:
     ExtUtils::MakeMaker:  0
 requires:
-    Inline::Java:  0
+    Inline::Java:  0.53
 no_index:
     directory:
         - t
