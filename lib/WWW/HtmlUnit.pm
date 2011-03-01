@@ -64,7 +64,7 @@ Also see L<WWW::HtmlUnit::Sweet> for a way to pretend that HtmlUnit works a litt
 use strict;
 use warnings;
 
-our $VERSION = '0.14';
+our $VERSION = '0.15';
 
 sub find_jar_path {
   my $self = shift;
@@ -100,6 +100,8 @@ sub collect_default_jars {
 
 =head1 MODULE IMPORT PARAMETERS
 
+In general, any parameters you pass while importing ('use'-ing) L<WWW::HtmlUnit> will be passed on to L<Inline::Java>. A handy one is the 'DIRECTORY' parameter, for example. A few parameters are handled specially, however.
+
 If you need to include extra .jar files, and/or if you want to study more java classes, you can do:
 
   use HtmlUnit
@@ -113,7 +115,7 @@ Whether you ask for it or not, WebClient, BrowserVersion, and Cookie (each in th
   my $cookie = WWW::HtmlUnit::com::gargoylesoftware::htmlunit::Cookie->new($name, $value);
   $webClient->getCookieManager->addCookie($cookie);
 
-Which is, incidentally, just the sort of thing that I should wrap in WWW::HtmlUnit::Sweet :)
+Which is, incidentally, just the sort of thing that I should wrap in WWW::HtmlUnit::Sweet or elsewhere, 'cause that is UGLY!
 
 =cut
 
@@ -123,6 +125,7 @@ sub import {
   my $custom_jars = "";
   if ($parameters{'jars'}) {
       $custom_jars = join(':', @{$parameters{'jars'}});
+      delete $parameters{'jars'};
   }
 
   my @STUDY = (
@@ -134,6 +137,7 @@ sub import {
   );    
   if ($parameters{'study'}) {
       push(@STUDY, @{$parameters{'study'}});
+      delete $parameters{'study'};
   }
 
   require Inline;
@@ -141,7 +145,8 @@ sub import {
     Java => 'STUDY',
     STUDY => \@STUDY,
     AUTOSTUDY => 1,
-    CLASSPATH => collect_default_jars() . ":" . $custom_jars
+    CLASSPATH => collect_default_jars() . ":" . $custom_jars,
+    %parameters
   );
 }
 
