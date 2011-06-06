@@ -20,7 +20,7 @@ WWW::HtmlUnit - Inline::Java based wrapper of the HtmlUnit v2.8 library
 
 =head1 DESCRIPTION
 
-This is a wrapper around the HtmlUnit library (HtmlUnit version 2.8 for this release). It includes the HtmlUnit jar itself and it's dependencies. All this library really does is find the jars and load them up using L<Inline::Java>.
+This is a wrapper around the HtmlUnit library (HtmlUnit version 2.9-SNAPSHOT (2011.06.05) for this release). It includes the HtmlUnit jar itself and it's dependencies. All this library really does is find the jars and load them up using L<Inline::Java>.
 
 The reason all this is interesting? HtmlUnit has very good javascript support, so you can automate, scrape, or test javascript-required websites.
 
@@ -64,7 +64,7 @@ Also see L<WWW::HtmlUnit::Sweet> for a way to pretend that HtmlUnit works a litt
 use strict;
 use warnings;
 
-our $VERSION = '0.15';
+our $VERSION = '0.16_01';
 
 sub find_jar_path {
   my $self = shift;
@@ -76,25 +76,24 @@ sub find_jar_path {
 sub collect_default_jars {
   my $jar_path = find_jar_path();
   return join ':', map { "$jar_path/$_" } qw(
-    apache-mime4j-0.6.jar
     commons-codec-1.4.jar
     commons-collections-3.2.1.jar
-    commons-io-1.4.jar
-    commons-lang-2.4.jar
+    commons-io-2.0.1.jar
+    commons-lang-2.6.jar
     commons-logging-1.1.1.jar
     cssparser-0.9.5.jar
-    htmlunit-2.8.jar
-    htmlunit-core-js-2.8.jar
-    httpclient-4.0.1.jar
-    httpcore-4.0.1.jar
-    httpmime-4.0.1.jar
-    nekohtml-1.9.14.jar
+    htmlunit-2.9-SNAPSHOT.jar
+    htmlunit-confirmhandler-2.8.jar
+    htmlunit-core-js-2.9-SNAPSHOT.jar
+    httpclient-4.1.1.jar
+    httpcore-4.1.jar
+    httpmime-4.1.1.jar
+    nekohtml-1.9.15-20110526.132024-4.jar
     sac-1.3.jar
     serializer-2.7.1.jar
     xalan-2.7.1.jar
     xercesImpl-2.9.1.jar
     xml-apis-1.3.04.jar
-    htmlunit-confirmhandler-2.8.jar
   );
 }
 
