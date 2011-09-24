@@ -54,8 +54,6 @@ Note that if you don't pass anything, errors will be sent to /dev/null (or a tem
 use strict;
 use warnings;
 
-use UNIVERSAL qw/isa can/;
-
 # Hold our error filehandle
 our $error_fh;
 
@@ -172,6 +170,8 @@ Examples:
   $agent->click;
 
 This scheme works quite well because HtmlUnit itself just so happens to not overlap their method names between different classes. Lucky us!
+
+Note: We also call ->toArray on results if needed. Probably at some point we'll get ALL array-like results from HtmlUnit to auto-execute ->toArray.
 
 =cut
 
