@@ -35,4 +35,5 @@ t/02_hello_sweet.html
 t/02_hello_sweet.t
 t/03_clickhandler.html
 t/03_clickhandler.t
-META.yml                                 Module meta-data (added by MakeMaker)
+META.yml                                 Module YAML meta-data (added by MakeMaker)
+META.json                                Module JSON meta-data (added by MakeMaker)
