@@ -1,5 +1,5 @@
 {
-   "abstract" : "Inline::Java based wrapper of the HtmlUnit v2.10 library",
+   "abstract" : "Inline::Java based wrapper of the HtmlUnit v2.11 library",
    "author" : [
       "awwaiid <awwaiid@thelackthereof.org>"
    ],
@@ -37,5 +37,5 @@
       }
    },
    "release_status" : "stable",
-   "version" : "0.19"
+   "version" : "0.20"
 }
