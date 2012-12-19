@@ -64,8 +64,7 @@ Also see L<WWW::HtmlUnit::Sweet> for a way to pretend that HtmlUnit works a litt
 use strict;
 use warnings;
 
-our $VERSION = '0.18';
-
+our $VERSION = '0.19';
 
 sub find_jar_path {
   my $self = shift;
@@ -146,7 +145,7 @@ sub import {
     Java => 'STUDY',
     STUDY => \@STUDY,
     AUTOSTUDY => 1,
-    CLASSPATH => collect_default_jars() . ":" . $custom_jars,
+    CLASSPATH => collect_default_jars() . $classpath_separator . $custom_jars,
     %parameters
   );
 }
